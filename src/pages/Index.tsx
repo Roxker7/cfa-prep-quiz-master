@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, BookOpen, Target, TrendingUp, FileText } from "lucide-react";
+import { Upload, BookOpen, Target, TrendingUp, FileText, Zap, Award, BarChart3 } from "lucide-react";
 import { QuizUploader } from "@/components/QuizUploader";
 import { QuizInterface } from "@/components/QuizInterface";
 import { PerformanceTracker } from "@/components/PerformanceTracker";
@@ -22,48 +22,86 @@ const Index = () => {
     setActiveTab('performance');
   };
 
+  const stats = {
+    totalQuestions: questions.length,
+    totalAttempts: quizResults.length,
+    averageScore: quizResults.length > 0 
+      ? Math.round((quizResults.filter(r => r.isCorrect).length / quizResults.length) * 100)
+      : 0
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Header */}
-      <div className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
+      {/* Enhanced Header */}
+      <div className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-10 shadow-sm">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="bg-blue-600 p-2 rounded-lg">
-                <BookOpen className="h-6 w-6 text-white" />
+            <div className="flex items-center space-x-4">
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-xl shadow-lg">
+                <BookOpen className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">CFA Level 1 Quiz System</h1>
-                <p className="text-sm text-gray-600">Professional exam preparation tool</p>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                  CFA Level 1 Quiz Master
+                </h1>
+                <p className="text-gray-600 font-medium">Professional exam preparation platform</p>
               </div>
             </div>
-            <div className="flex space-x-2">
-              <Button
-                variant={activeTab === 'upload' ? 'default' : 'outline'}
-                onClick={() => setActiveTab('upload')}
-                className="flex items-center space-x-2"
-              >
-                <Upload className="h-4 w-4" />
-                <span>Upload</span>
-              </Button>
-              <Button
-                variant={activeTab === 'quiz' ? 'default' : 'outline'}
-                onClick={() => setActiveTab('quiz')}
-                disabled={questions.length === 0}
-                className="flex items-center space-x-2"
-              >
-                <Target className="h-4 w-4" />
-                <span>Quiz</span>
-              </Button>
-              <Button
-                variant={activeTab === 'performance' ? 'default' : 'outline'}
-                onClick={() => setActiveTab('performance')}
-                className="flex items-center space-x-2"
-              >
-                <TrendingUp className="h-4 w-4" />
-                <span>Performance</span>
-              </Button>
+            
+            {/* Quick Stats */}
+            <div className="hidden md:flex items-center space-x-6 text-sm">
+              <div className="text-center">
+                <div className="font-bold text-2xl text-blue-600">{stats.totalQuestions}</div>
+                <div className="text-gray-500">Questions</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-2xl text-green-600">{stats.totalAttempts}</div>
+                <div className="text-gray-500">Attempts</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-2xl text-purple-600">{stats.averageScore}%</div>
+                <div className="text-gray-500">Avg Score</div>
+              </div>
             </div>
+          </div>
+
+          {/* Enhanced Navigation */}
+          <div className="flex space-x-2 mt-6">
+            <Button
+              variant={activeTab === 'upload' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('upload')}
+              className="flex items-center space-x-2 transition-all hover:scale-105"
+            >
+              <Upload className="h-4 w-4" />
+              <span>Upload</span>
+            </Button>
+            <Button
+              variant={activeTab === 'quiz' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('quiz')}
+              disabled={questions.length === 0}
+              className="flex items-center space-x-2 transition-all hover:scale-105"
+            >
+              <Target className="h-4 w-4" />
+              <span>Quiz</span>
+              {questions.length > 0 && (
+                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                  {questions.length}
+                </span>
+              )}
+            </Button>
+            <Button
+              variant={activeTab === 'performance' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('performance')}
+              className="flex items-center space-x-2 transition-all hover:scale-105"
+            >
+              <TrendingUp className="h-4 w-4" />
+              <span>Analytics</span>
+              {quizResults.length > 0 && (
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                  {quizResults.length}
+                </span>
+              )}
+            </Button>
           </div>
         </div>
       </div>
@@ -71,47 +109,59 @@ const Index = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {activeTab === 'upload' && (
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Upload Your CFA Question Bank</h2>
-              <p className="text-lg text-gray-600 mb-8">
-                Upload your PDF question bank to extract questions and start practicing
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Upload Your CFA Question Bank
+              </h2>
+              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                Transform your PDF question bank into an interactive quiz experience. 
+                Extract questions, track progress, and identify areas for improvement.
               </p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <Card className="text-center">
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              <Card className="text-center hover:shadow-lg transition-all hover:-translate-y-1 border-0 shadow-md">
                 <CardHeader>
-                  <FileText className="h-12 w-12 text-blue-600 mx-auto mb-2" />
-                  <CardTitle>PDF Processing</CardTitle>
+                  <div className="mx-auto bg-blue-100 p-4 rounded-full w-fit mb-4">
+                    <FileText className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-xl">Smart PDF Processing</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription>
-                    Advanced PDF parsing to extract questions, options, and answers from your CFA question bank
+                  <CardDescription className="text-base">
+                    Advanced AI-powered extraction that identifies questions, multiple-choice options, 
+                    and correct answers from your CFA question bank with high accuracy.
                   </CardDescription>
                 </CardContent>
               </Card>
               
-              <Card className="text-center">
+              <Card className="text-center hover:shadow-lg transition-all hover:-translate-y-1 border-0 shadow-md">
                 <CardHeader>
-                  <Target className="h-12 w-12 text-green-600 mx-auto mb-2" />
-                  <CardTitle>Subject Organization</CardTitle>
+                  <div className="mx-auto bg-green-100 p-4 rounded-full w-fit mb-4">
+                    <Target className="h-8 w-8 text-green-600" />
+                  </div>
+                  <CardTitle className="text-xl">Subject Organization</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription>
-                    Questions organized by CFA subjects: Ethics, Quantitative Methods, Portfolio Management, and more
+                  <CardDescription className="text-base">
+                    Questions automatically organized by CFA curriculum topics: Ethics, 
+                    Quantitative Methods, Portfolio Management, and all major subject areas.
                   </CardDescription>
                 </CardContent>
               </Card>
               
-              <Card className="text-center">
+              <Card className="text-center hover:shadow-lg transition-all hover:-translate-y-1 border-0 shadow-md">
                 <CardHeader>
-                  <TrendingUp className="h-12 w-12 text-purple-600 mx-auto mb-2" />
-                  <CardTitle>Performance Tracking</CardTitle>
+                  <div className="mx-auto bg-purple-100 p-4 rounded-full w-fit mb-4">
+                    <BarChart3 className="h-8 w-8 text-purple-600" />
+                  </div>
+                  <CardTitle className="text-xl">Advanced Analytics</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription>
-                    Track your progress, identify weak areas, and monitor improvement over time
+                  <CardDescription className="text-base">
+                    Comprehensive performance tracking with detailed analytics, progress visualization, 
+                    and personalized recommendations for focused study.
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -132,6 +182,39 @@ const Index = () => {
           <PerformanceTracker results={quizResults} />
         )}
       </div>
+
+      {/* Enhanced Footer */}
+      <footer className="bg-gray-50 border-t mt-16">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">About CFA Quiz Master</h3>
+              <p className="text-gray-600 text-sm">
+                A comprehensive platform designed to help CFA Level 1 candidates 
+                prepare effectively using their own question banks.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Features</h3>
+              <ul className="text-gray-600 text-sm space-y-1">
+                <li>• PDF Question Extraction</li>
+                <li>• Subject-Based Organization</li>
+                <li>• Performance Analytics</li>
+                <li>• Progress Tracking</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Study Tips</h3>
+              <ul className="text-gray-600 text-sm space-y-1">
+                <li>• Focus on weak areas</li>
+                <li>• Regular practice sessions</li>
+                <li>• Review incorrect answers</li>
+                <li>• Track improvement over time</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
